@@ -1,3 +1,4 @@
+# this is my first exercise
 # importings
 from tkinter import *
 import matplotlib.pyplot as plt
@@ -7,11 +8,12 @@ from tkinter import messagebox
 from matplotlib import style
 plt.style.use('ggplot')
 # Beginning of train
-points= [(1,1,0),(1,2,0),(2,3,0),(3,1,0),(2,2,0),(10,11,1),(11,12,1),(9,10,1),(11,8,1),(8,12,1)]
+points= [(1,1,0),(1,2,0),(2,3,0),(3,1,0),(2,2,0), # points in A
+         (10,11,1),(11,12,1),(9,10,1),(11,8,1),(8,12,1)]    # points in B
 # First 5 are A and Second 5 are B in format (x1,x2,t)
-# 0 for A and 1 for B
-#w0,w1,w2 = 0,0,0 at first of train
-#x0 value is always one
+# t=0 for A and t=11 for B
+# w0,w1,w2 = 0,0,0 at first of train
+# x0 value is always one
 # y is one when I is greater than zero
 # I  equals to : summation of x_i*w_i
 # ty : This is t-y
@@ -20,8 +22,6 @@ points= [(1,1,0),(1,2,0),(2,3,0),(3,1,0),(2,2,0),(10,11,1),(11,12,1),(9,10,1),(1
 weights = []
 def evaluate(A=points,len=10,w0=0,w1=0,w2=0,x0=1,y=0,I=0,ty=0):
     print('w0 w1 w2 x0 x1 x2 t I y ty')
-    x = []
-    y = []
     for K in range(0,20):
         for i in range(0,len):
             # calculating The new I
@@ -35,7 +35,7 @@ def evaluate(A=points,len=10,w0=0,w1=0,w2=0,x0=1,y=0,I=0,ty=0):
             ty = A[i][-1] - y # This is t - y
             print(w0,w1,w2,x0,A[i][0],A[i][1],A[i][-1],I,y,ty)
             # calculating new weights
-            weights.append([w1,w2])
+            weights.append([w0,w1,w2])
             w0 += x0*ty
             w1 += A[i][0]*ty
             w2 += A[i][1]*ty
@@ -49,9 +49,33 @@ def evaluate(A=points,len=10,w0=0,w1=0,w2=0,x0=1,y=0,I=0,ty=0):
             elif A[i][-1]==1:
                 plt.scatter(A[i][j],A[i][j+1],s=5,color='blue')    
     plt.show()
+    ################################################# testing part
+    test = [] # for storing t-y values
+    for i in range(0,len):
+        # calculating The new I
+        I = (x0*w0 + A[i][0]*w1 + A[i][1]*w2)
+        # calculating the new y
+        if I>0:
+            y=1
+        else:
+            y=0
+        # calculating the new t - y
+        ty = A[i][-1] - y # This is t - y
+        test.append(ty)
+        # calculating new weights
+        w0 += x0*ty
+        w1 += A[i][0]*ty
+        w2 += A[i][1]*ty
+    for item in test:
+        if item == 0:
+            pass
+        else:
+            messagebox.showerror('Non_Sepratable')
+            break    
 ######################################################################################################                
+mst = Tk()
 # canvas is the main window
-canvas = tk.Canvas(width=400,height=800)
+canvas = tk.Canvas(mst,width=400,height=800)
 canvas.pack()
 # Label A
 LabelA=tk.Label(text='Please Enter number of data in A :',justify='center')
@@ -110,7 +134,6 @@ def evaluation():
     A = list(zip(A1,A2,A3))
     B = list(zip(B1,B2,B3))
     C = list(A + B)
-    print(A);print(B);print(C)
     evaluate(C,len(C))
 # The Evaluation button
 Start_Button = tk.Button(text='Start Evaluation',command=evaluation)
@@ -118,5 +141,7 @@ canvas.create_window(200,580,window=Start_Button)
 # Evaluation eith default params
 Start_Default_Button = tk.Button(text='Start evaluation with default Params',command=evaluate)
 canvas.create_window (200,620,window=Start_Default_Button)
+# setting the title
+mst.title('Perceptron neuron')
 # The main Loop
 tk.mainloop()
